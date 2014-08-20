@@ -1,19 +1,23 @@
 {
   "name": "pouch-dat",
   "version": "0.0.0",
-  "description": "",
+  "description": "replicate from pouchdb to dat",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape test.js"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calvinmetcalf/pouch-dat.git"
+  },
+  "author": "Calvin Metcalf",
   "license": "ISC",
   "dependencies": {
     "dat": "^6.3.3",
-    "pouch-stream": "^0.3.1",
     "pouchdb": "^3.0.1",
     "through2": "^0.6.1",
-    "xtend": "^4.0.0"
+    "xtend": "^4.0.0",
+    "pouch-stream": "^0.4.0"
   },
   "devDependencies": {
     "tape": "^2.14.0"

@@ -15,8 +15,8 @@ function pre(t) {
 		t.ok(false, 'pouch screwed up');
 	});
 	d = dat('./.tmp/dat_test' + i, function (err) {
-		t.error(err, 'dat created')
-	})
+		t.error(err, 'dat created');
+	});
 }
 
 function post(t) {
@@ -33,14 +33,12 @@ function post(t) {
 
 	test('setup', pre);
 	test('the meat',  function (t) {
-		var rep;
 		t.plan(8);
 		p.bulkDocs([{foo: 'bar'}, {
 			_id:'midnight',
 			mood: 'happy'
 		}]).then(function () {
 			t.ok(true, 'bulk in');
-			rep = pd(d, p);
 			return p.bulkDocs([{
 				_id: 'thalia',
 				mood: 'inquisitive'
@@ -58,26 +56,24 @@ function post(t) {
 			doc.mood = 'angry';
 			return p.put(doc);
 		})
-		.delay(100)
 		.then(function () {
-			t.ok(true, "put and delayed");
-			rep.cancel();
-			d.createReadStream().on('data', function (d) {
-				console.log(d);
-				switch (d.key) {
-					case 'midnight':
-					    t.equals(d.value.mood, 'angry', 'got midnight');
-					    return;
-					case 'thalia':
-					    t.equals(d.value.mood, 'inquisitive', 'got thalia');
-					    return;
-					case 'calliope':
-					    t.equals(d.value.mood, 'scared', 'got calliope');
-					    return;
-					default:
-						console.log(d);
-					    t.equals(d.value.foo,  'bar', 'got rando');
-				}
+			pd(d, p, {live: false}).on('finish', function () {
+				t.ok(true, 'replicated');
+				d.createReadStream().on('data', function (d) {
+					switch (d.key) {
+						case 'midnight':
+						    t.equals(d.mood, 'angry', 'got midnight again');
+						    return;
+						case 'thalia':
+						    t.equals(d.mood, 'inquisitive', 'got thalia again');
+						    return;
+						case 'calliope':
+						    t.equals(d.mood, 'scared', 'got calliope again');
+						    return;
+						default:
+						    t.equals(d.foo,  'bar', 'got rando');
+					}
+				});
 			});
 		}).catch(function (e){
 			t.ok(false, e);
